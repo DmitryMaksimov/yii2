@@ -118,3 +118,10 @@ a.desc:after {
 .nav > li > form > button.logout:focus {
     outline: none;
 }
+
+.post__view {
+    border: 1px solid lightgray;
+}
+
+.post__sub {
+}

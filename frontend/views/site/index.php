@@ -1,53 +1,46 @@
 <?php
 
+
+use yii\helpers\Html;
+use yii\widgets\ActiveForm;
+
+
 /* @var $this yii\web\View */
 
-$this->title = 'My Yii Application';
+
+
+$this->title = 'Мой суперский БЛОГ';
+
 ?>
+<div id="dialog" title="Dialog Title">I'm a dialog</div>
 <div class="site-index">
-
-    <div class="jumbotron">
-        <h1>Congratulations!</h1>
-
-        <p class="lead">You have successfully created your Yii-powered application.</p>
-
-        <p><a class="btn btn-lg btn-success" href="http://www.yiiframework.com">Get started with Yii</a></p>
-    </div>
 
     <div class="body-content">
 
         <div class="row">
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/doc/">Yii Documentation &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/forum/">Yii Forum &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/extensions/">Yii Extensions &raquo;</a></p>
-            </div>
+            <?php
+                foreach ($models as $model) {
+                    $form = ActiveForm::begin([
+                        'id' => 'post-form_{$model->id}',
+                    ]);
+                    ?>
+                    <div class="post__view">
+                        <h1> <?php echo $model->title ?> </h1>
+                        <?php echo $model->body ?>
+                    </div>
+                    <div class="post__sub">
+                        <?php echo $model->created ?>
+                    </div>
+                    <?php
+                        ActiveForm::end();
+                }
+            ?>
         </div>
-
+        <?php
+            // отображаем ссылки на страницы
+            echo yii\widgets\LinkPager::widget([
+                'pagination' => $pages,
+            ]);
+        ?>
     </div>
 </div>
