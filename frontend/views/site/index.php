@@ -34,7 +34,7 @@ Dialog::begin([
         'id' => 'Preview',
         'onclick' => "
             $(EditDialog).dialog('close');
-            EditDialog.form_to_edit.find('#postajax-body').prop('value', TextEditor.value);
+            EditDialog.form_to_edit.find('#post-body').prop('value', TextEditor.value);
             EditDialog.form_to_edit.find('#post_body').html(TextEditor.value);
             EditDialog.form_to_edit.find('#SaveButton').prop('disabled', false);
         "]
@@ -72,7 +72,7 @@ $this->registerJs( "
     $('#EditBody').each(function() {
         $(this).on('click', function() {
             EditDialog.form_to_edit = $(this).parents('form');
-            TextEditor.value = EditDialog.form_to_edit.find('#postajax-body').prop('value');
+            TextEditor.value = EditDialog.form_to_edit.find('#post-body').prop('value');
             $(EditDialog).dialog('open');
         });
     });
@@ -90,45 +90,41 @@ $this->registerJs( "
         <div class="row">
             <?php
             foreach ($models as $model) {
+                if( ! Yii::$app->User->isGuest ) {
+                    $form = ActiveForm::begin([
+                        'id' => "post-form",
+                        'action' => yii\helpers\Url::to(["site/update-post", 'id' => $model->id])
+                    ]);
 
-                $form = ActiveForm::begin([
-                    'id' => "post-form",
-                    'action' => ['site/update-post']
-                ]);
-
-                $ajax->id = $model->id;
-                $ajax->body = $model->body;
-                $ajax->title = $model->title;
-
-                echo $form->field($ajax, 'id')->hiddenInput()->label(false);
-                echo $form->field($ajax, 'title')->hiddenInput()->label(false);
-                echo $form->field($ajax, 'body')->hiddenInput()->label(false);
-
+                    echo $form->field($model, 'title')->hiddenInput()->label(false);
+                    echo $form->field($model, 'body')->hiddenInput()->label(false);
+                }
                 ?>
-                    <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                     <div class="post__view">
                         <h1> <?php echo $model->title ?> </h1>
                         <div id="post_body">
                             <?php echo $model->body ?>
                         </div>
                     </div>
+
+                <?php if( ! Yii::$app->User->isGuest ) { ?>
+
                     <div class="post__sub">
                         
                         <?php
-                        if( Yii::$app->User->isGuest ) {
                             echo Html::button("Редактировать", [ 'id' => 'EditBody' ]);
                             echo Html::submitInput("Сохранить", [
                                 'id' => "SaveButton",
                                 "disabled" => true,
                             ]);
-                        }
 
                         echo $model->created
                         ?>
 
                     </div>
-                <?php
-                ActiveForm::end();
+                    <?php
+                    ActiveForm::end();
+                }
             }
             ?>
         </div>

@@ -74,37 +74,40 @@ class SiteController extends Controller
 
     /**
      * Edit post.
-     *
+     * 
+     * @param integer $id
      * @return mixed
      */
-    public function actionUpdatePost()
+    public function actionUpdatePost($id)
     {
-        $ajax = new Post();
-        $error = "Не AJAX запрос";
-
-        Yii::debug('Запрос');
+        Yii::debug(123);
+        $post = Post::findOne($id);
 
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-        if (Yii::$app->request->isAjax) { 
-            if($ajax->load(Yii::$app->request->post()) && $ajax->validate()) {
-                return [
-                    "message" => "Выполнено успешно",
-                    "error" => null,
-                ];
+        if ( true /* Yii::$app->request->isAjax */ ) { 
+            if( $post->load(Yii::$app->request->post()) && $post->validate() ) {
+                if( $post->save() ) {
+                    return [
+                        "message" => "Выполнено успешно",
+                        "error" => null,
+                    ];
+                } else {
+                    return [
+                        "message" => "Ошибка сохранения данных",
+                        "error" => $post->getErrors(),
+                    ];
+                }
             } else
                 return [
                     "message" => "Ошибка получения данных",
-                    "error" => $ajax->error,
+                    "error" => $ajax->getErrors(),
                 ];
         } else // Если это не AJAX запрос, отправляем ответ с сообщением об ошибке
             return [
                 "message" => "Неверный запрос",
                 "error" => "Не AJAX запрос",
             ];
-
-        $ajax->load();
-
     }
 
     /**
