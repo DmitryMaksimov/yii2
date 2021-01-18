@@ -17,6 +17,7 @@ use frontend\models\ContactForm;
 
 
 use common\models\Post;
+use common\models\PostAjax;
 use yii\data\Pagination;
 
 /**
@@ -72,6 +73,41 @@ class SiteController extends Controller
     }
 
     /**
+     * Edit post.
+     *
+     * @return mixed
+     */
+    public function actionUpdatePost()
+    {
+        $ajax = new Post();
+        $error = "Не AJAX запрос";
+
+        Yii::debug('Запрос');
+
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        if (Yii::$app->request->isAjax) { 
+            if($ajax->load(Yii::$app->request->post()) && $ajax->validate()) {
+                return [
+                    "message" => "Выполнено успешно",
+                    "error" => null,
+                ];
+            } else
+                return [
+                    "message" => "Ошибка получения данных",
+                    "error" => $ajax->error,
+                ];
+        } else // Если это не AJAX запрос, отправляем ответ с сообщением об ошибке
+            return [
+                "message" => "Неверный запрос",
+                "error" => "Не AJAX запрос",
+            ];
+
+        $ajax->load();
+
+    }
+
+    /**
      * Displays homepage.
      *
      * @return mixed
@@ -87,7 +123,8 @@ class SiteController extends Controller
 
         return $this->render('index', [
             'models' => $models,
-            'pages' => $pages,            
+            'pages' => $pages,
+            'ajax' => new PostAjax(),
         ]);
     }
 
