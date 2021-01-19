@@ -17,7 +17,6 @@ use frontend\models\ContactForm;
 
 
 use common\models\Post;
-use common\models\PostAjax;
 use yii\data\Pagination;
 
 /**
@@ -73,6 +72,36 @@ class SiteController extends Controller
     }
 
     /**
+     * Delete post.
+     * 
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionDeletePost($id)
+    {
+        $post = Post::findOne($id);
+        if($post)
+            $post->delete();
+        return $this->redirect(['index']);
+    }
+
+    /**
+     * Delete post.
+     * 
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionCreatePost()
+    {
+        $post = new Post;
+        $post->author_id = Yii::$app->user->id;
+        $post->title = "New title";
+        $post->body = "";
+        $post->save();
+        return $this->redirect(['index']);
+    }
+
+    /**
      * Edit post.
      * 
      * @param integer $id
@@ -80,7 +109,6 @@ class SiteController extends Controller
      */
     public function actionUpdatePost($id)
     {
-        Yii::debug(123);
         $post = Post::findOne($id);
 
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
@@ -88,7 +116,9 @@ class SiteController extends Controller
         if ( true /* Yii::$app->request->isAjax */ ) { 
             if( $post->load(Yii::$app->request->post()) && $post->validate() ) {
                 if( $post->save() ) {
+                    $post->refresh();
                     return [
+                        "updated" => $post->updated,
                         "message" => "Выполнено успешно",
                         "error" => null,
                     ];
@@ -117,7 +147,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        $query = Post::find();
+        $query = Post::find()->orderBy('id DESC');
         $countQuery = clone $query;
         $pages = new Pagination(['totalCount' => $countQuery->count()]);
         $models = $query->offset($pages->offset)
@@ -127,7 +157,6 @@ class SiteController extends Controller
         return $this->render('index', [
             'models' => $models,
             'pages' => $pages,
-            'ajax' => new PostAjax(),
         ]);
     }
 
