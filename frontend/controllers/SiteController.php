@@ -80,9 +80,13 @@ class SiteController extends Controller
     public function actionDeletePost($id)
     {
         $post = Post::findOne($id);
-        if($post)
+        if( $post && (Yii::$app->user->identity->role || Yii::$app->user->id == $post->author_id) ) {
             $post->delete();
-        return $this->redirect(['index']);
+            return $this->goBack();
+        } else {
+            Yii::$app->response->setStatusCode(403);
+            return;
+        }
     }
 
     /**
@@ -97,7 +101,7 @@ class SiteController extends Controller
         $post->author_id = Yii::$app->user->id;
         $post->title = "New title";
         $post->body = "";
-        $post->save();
+        $post->save(); // Если пользователь не авторизован, то id будет null и БД вернет ошибку
         return $this->redirect(['index']);
     }
 
@@ -113,7 +117,14 @@ class SiteController extends Controller
 
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-        if ( true /* Yii::$app->request->isAjax */ ) { 
+        if ( Yii::$app->request->isAjax ) { 
+            if( !Yii::$app->user->identity->role && Yii::$app->user->id != $post->author_id ) {
+                Yii::$app->response->setStatusCode(403);
+                return [
+                    "message" => "Доступ запрещен",
+                    "error" => "Access denied for user",
+                ];
+            }
             if( $post->load(Yii::$app->request->post()) && $post->validate() ) {
                 if( $post->save() ) {
                     $post->refresh();
@@ -147,8 +158,8 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        $query = Post::find()->orderBy('id DESC');
-        $countQuery = clone $query;
+        $query = Post::find()->joinWith('author')->orderBy('post.id DESC');
+        $countQuery = Post::find(); // Значительное ускорение без джоина посчитать
         $pages = new Pagination(['totalCount' => $countQuery->count()]);
         $models = $query->offset($pages->offset)
             ->limit($pages->limit)

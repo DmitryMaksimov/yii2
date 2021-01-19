@@ -21,7 +21,7 @@ $this->title = 'Мой суперский БЛОГ';
             <?php
             foreach ($models as $model) {
 
-                $editable = $model->author_id == Yii::$app->User->id;
+                $editable = $model->author_id == Yii::$app->User->id || Yii::$app->User->identity->role;
 
                 echo Html::beginTag('div', [
                     'class' => 'post__view',
@@ -43,11 +43,10 @@ $this->title = 'Мой суперский БЛОГ';
                         'oninput' => '$(this).parents(".post__view").find("#SavePost").prop("disabled", false)',
                         'onclick' => '$(this).parents(".post__view").find(".post__edited").show("slow")'
                     ]);
-                    
-                    if( $editable ) {
 
-                        echo Html::beginTag('div', [ 'class' => 'post__sub']);
+                    echo Html::beginTag('div', [ 'class' => 'post__sub']);
 
+                        if( $editable ) {
                             echo Html::beginTag('div', [ 'class' => 'post__edited' ]);
                                 echo Html::button("Сохранить", [ 'class' => "post__save" ]);
                                 echo Html::a('Удалить', ['site/delete-post', 'id' => $model->id], [
@@ -57,12 +56,12 @@ $this->title = 'Мой суперский БЛОГ';
                                         'method' => 'post',
                                     ],
                                 ]);
-                                echo Html::endTag('div');
+                            echo Html::endTag('div');
+                        }
+                        echo Html::tag('p', ($model->updated)?$model->updated:$model->created, [ 'class' => 'post__updated' ]);
+                        echo Html::tag('p', $model->author->username, [ 'class' => 'post__author' ]);
 
-                            echo Html::tag('p', ($model->updated)?$model->updated:$model->created, [ 'class' => 'post__updated' ]);
-
-                        echo Html::endTag('div');
-                    }
+                    echo Html::endTag('div');
                 echo Html::endTag('div');
             }
             ?>
@@ -82,7 +81,7 @@ $this->registerJs( "$('.post__edited').hide();",
     'post-form-prepare'
 );
 
-if( ! Yii::$app->User->isGuest && $models ) {
+if( !Yii::$app->User->isGuest && $models ) {
 
     $form = ActiveForm::begin([
         'id' => "post-form",
@@ -128,13 +127,14 @@ if( ! Yii::$app->User->isGuest && $models ) {
                 type: 'POST',
                 data: data,
                 success: function (data) {
-                    if(data.error == null) {
-                        post__edited.hide('fast');
+                    post__edited.hide('fast');
+                    if(data.error == null)
                         post_to_save.find('.post__updated').html(data.updated);
-                    }
+                    else
+                        alert(data.error);
                 },
                 error: function(jqXHR, errMsg) {
-                    alert('error: ' + errMsg);
+                    alert('error: ' + jqXHR.status);
                 }
             });
             return false; // prevent default submit
