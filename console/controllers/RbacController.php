@@ -15,8 +15,8 @@ class RbacController extends Controller
 
         $auth->removeAll();
 
-        $rule = new AuthRule;
-        $auth->add($rule);
+        $isAuthor = new AuthRule;
+        $auth->add($isAuthor);
 
         // добавляем разрешение "createPost"
         $createPost = $auth->createPermission('createPost');
@@ -43,7 +43,7 @@ class RbacController extends Controller
         // добавляем разрешение "updateOwnPost" и привязываем к нему правило.
         $updateOwnPost = $auth->createPermission('updateOwnPost');
         $updateOwnPost->description = 'Update own post';
-        $updateOwnPost->ruleName = $rule->name;
+        $updateOwnPost->ruleName = $isAuthor->name;
         $auth->add($updateOwnPost);
 
         // "updateOwnPost" будет использоваться из "updatePost"

@@ -21,7 +21,7 @@ $this->title = 'Мой суперский БЛОГ';
             <?php
             foreach ($models as $model) {
 
-                $editable = $model->author_id == Yii::$app->User->id;
+                $editable = (Yii::$app->user->can('updatePost', ['post' => $model]))? true: false;
 
                 echo Html::beginTag('div', [
                     'class' => 'post__view',

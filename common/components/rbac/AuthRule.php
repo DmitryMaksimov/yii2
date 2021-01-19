@@ -2,6 +2,7 @@
 
 namespace common\components\rbac;
 
+use yii;
 use yii\rbac\Rule;
 
 /**

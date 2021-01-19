@@ -129,7 +129,7 @@ class SiteController extends Controller
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
         if ( Yii::$app->request->isAjax ) { 
-            if( !Yii::$app->user->identity->role && Yii::$app->user->id != $post->author_id ) {
+            if( !Yii::$app->user->can('updatePost', ['post' => $post]) ) {
                 Yii::$app->response->setStatusCode(403);
                 return [
                     "message" => "Доступ запрещен",
