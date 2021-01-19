@@ -34,7 +34,7 @@ class SiteController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['login', 'about', 'contact'],
+                        'actions' => ['index', 'login', 'about', 'contact'],
                         'allow' => true,
                     ],
                     [
@@ -43,10 +43,18 @@ class SiteController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['logout', 'update-post', 'delete-post', 'create-post'],
+                        'actions' => ['logout'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
+                    [
+                        'actions' => ['create-post', 'update-post', 'delete-post'],
+                        'allow' => true,
+                        'roles' => ['admin', 'author'],
+                    ],
+                    [
+                        'allow' => false,
+                    ]
                 ],
             ],
             'verbs' => [
@@ -83,7 +91,7 @@ class SiteController extends Controller
     public function actionDeletePost($id)
     {
         $post = Post::findOne($id);
-        if( $post && (Yii::$app->user->identity->role || Yii::$app->user->id == $post->author_id) ) {
+        if(\Yii::$app->user->can('updatePost', ['post' => $post])) {
             $post->delete();
             return $this->goBack();
         } else {

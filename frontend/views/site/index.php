@@ -21,7 +21,7 @@ $this->title = 'Мой суперский БЛОГ';
             <?php
             foreach ($models as $model) {
 
-                $editable = $model->author_id == Yii::$app->User->id || Yii::$app->User->identity->role;
+                $editable = $model->author_id == Yii::$app->User->id;
 
                 echo Html::beginTag('div', [
                     'class' => 'post__view',
