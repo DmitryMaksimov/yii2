@@ -5,6 +5,7 @@ namespace console\controllers;
 use Yii;
 use yii\console\Controller;
 use common\components\rbac\AuthRule;
+use common\models\User;
 
 
 class RbacController extends Controller
@@ -54,8 +55,12 @@ class RbacController extends Controller
 
         // Назначение ролей пользователям. 1 и 2 это IDs возвращаемые IdentityInterface::getId()
         // обычно реализуемый в модели User.
-        $auth->assign($author, 2);
-        $auth->assign($admin, 1);        
+        $auth->assign($admin, 1);
+
+        $users = User::find()->select('id')->where(['<>', 'id', 1])->all();
+        foreach( $users as $user ) {
+            $auth->assign($author, $user->id);
+        }
     }
 
 }

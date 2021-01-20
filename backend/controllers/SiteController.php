@@ -9,6 +9,7 @@ use common\models\LoginForm;
 
 use common\models\User;
 use yii\data\Pagination;
+use backend\models\UserForm;
 
 /**
  * Site controller
@@ -29,7 +30,7 @@ class SiteController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'index', 'delete'],
+                        'actions' => ['logout', 'index', 'delete', 'update'],
                         'allow' => true,
                         'roles' => ['admin'],
                     ],
@@ -94,6 +95,27 @@ class SiteController extends Controller
         } else 
             Yii::$app->session->setFlash('failed', 'Ошибка удаления');
         $this->goBack();
+    }
+
+    /**
+     * Update User action.
+     *
+     * @return string
+     */
+    public function actionUpdate($id = null)
+    {
+        $model = new UserForm($id);
+
+        
+        if ($model->load( Yii::$app->request->post() ) && $model->save()) {
+            return $this->goBack();
+        }
+        
+        Yii::trace($model->getErrors());
+        
+        return $this->render('user', [
+            'model' => $model,
+        ]);
     }
 
     /**

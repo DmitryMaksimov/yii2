@@ -31,10 +31,24 @@ $this->title = 'My Yii Application';
                         'class' => 'yii\grid\ActionColumn',
                         'visibleButtons' => [
                             'view' => false,
-                            'update' => false,
-                            'delete' => function ($model, $key, $index) { return $model->id != 1; } 
+                            'update' => true,
+                            'delete' => true//function ($model, $key, $index) { return $model->id != 1; } 
                         ]
-                    ]
+                    ],
+                    [
+                        'label' => 'Роли',
+                        'attribute' => 'id',
+                        'format' => 'text',
+                        'value' => function($user) {
+                            $res = "";
+                            foreach ( Yii::$app->authManager->getRolesByUser($user->id) as $role)
+                                if($res == "")
+                                    $res = $role->name;
+                                else
+                                    $res += $role->name;
+                            return $res;
+                        }
+                    ],
                 ],
             ]);
         ?>
