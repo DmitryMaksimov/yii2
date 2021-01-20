@@ -7,6 +7,9 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use common\models\LoginForm;
 
+use common\models\User;
+use yii\data\Pagination;
+
 /**
  * Site controller
  */
@@ -26,7 +29,7 @@ class SiteController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'index'],
+                        'actions' => ['logout', 'index', 'delete'],
                         'allow' => true,
                         'roles' => ['admin'],
                     ],
@@ -63,7 +66,34 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $query = User::find();
+//        $query = User::find()->select(['{{user}}.id', '{{user}}.username', 'COUNT({{post}}.id) AS postCount'])->joinWith('author')->groupBy('{{user}}.id');
+//        $countQuery = User::find();
+
+//        $pages = new Pagination(['totalCount' => $countQuery->count()]);
+//        $users = $query->offset($pages->offset)
+//            ->limit($pages->limit)
+//            ->all();
+
+        return $this->render('index', [
+            'users' => $query,
+//            'pages' => $pages,
+        ]);
+    }
+
+    /**
+     * Displays homepage.
+     *
+     * @return redirect
+     */
+    public function actionDelete($id)
+    {
+        if($id != 1 && User::findOne($id)->delete()) {
+            Yii::$app->authManager->revokeAll($id);
+            Yii::$app->session->setFlash('success', 'Пользователь и его посты удалены');
+        } else 
+            Yii::$app->session->setFlash('failed', 'Ошибка удаления');
+        $this->goBack();
     }
 
     /**
