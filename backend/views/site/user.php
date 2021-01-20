@@ -14,20 +14,20 @@ $this->title = 'User properties';
 
     <p>Please fill out the following fields to login:</p>
 
-            <?php $form = ActiveForm::begin([
-                'id' => 'user-form',
-                'action' => yii\helpers\Url::to(["site/update", 'id' => $model->id]),
-            ]); ?>
+        <?php $form = ActiveForm::begin([
+            'id' => 'user-form',
+            'action' => yii\helpers\Url::to(["site/update", 'id' => $model->id]),
+        ]); ?>
 
-                <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
+            <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
 
-                <?= $form->field($model, 'email')->textInput() ?>
+            <?= $form->field($model, 'email')->textInput() ?>
 
-                <?= $form->field($model, 'password')->textInput() ?>
+            <?= $form->field($model, 'password')->textInput() ?>
 
-                <div class="form-group">
-                    <?= Html::submitButton('Save', ['class' => 'btn btn-primary btn-block', 'name' => 'save-button']) ?>
-                </div>
+            <div class="form-group">
+                <?= Html::submitButton('Save', ['class' => 'btn btn-primary btn-block', 'name' => 'save-button']) ?>
+            </div>
 
-            <?php ActiveForm::end(); ?>
+        <?php ActiveForm::end(); ?>
 </div>

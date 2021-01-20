@@ -1,5 +1,6 @@
 <?php
 
+use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\data\ActiveDataProvider;
 /* @var $this yii\web\View */
@@ -32,7 +33,7 @@ $this->title = 'My Yii Application';
                         'visibleButtons' => [
                             'view' => false,
                             'update' => true,
-                            'delete' => true//function ($model, $key, $index) { return $model->id != 1; } 
+                            'delete' => function ($model, $key, $index) { return $model->id != Yii::$app->user->id; } 
                         ]
                     ],
                     [
@@ -51,6 +52,7 @@ $this->title = 'My Yii Application';
                     ],
                 ],
             ]);
+            echo Html::a('Добавить пользователя', ['site/update'], [ 'class' => 'btn' ]);
         ?>
 
     </div>

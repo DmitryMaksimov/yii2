@@ -89,7 +89,10 @@ class SiteController extends Controller
      */
     public function actionDelete($id)
     {
-        if($id != 1 && User::findOne($id)->delete()) {
+        if(Yii::$app->user->id == $id)
+            return Yii::$app->response->setStatusCode(403);
+
+        if(User::findOne($id)->delete()) {
             Yii::$app->authManager->revokeAll($id);
             Yii::$app->session->setFlash('success', 'Пользователь и его посты удалены');
         } else 
@@ -112,7 +115,7 @@ class SiteController extends Controller
         }
         
         Yii::trace($model->getErrors());
-        
+
         return $this->render('user', [
             'model' => $model,
         ]);
