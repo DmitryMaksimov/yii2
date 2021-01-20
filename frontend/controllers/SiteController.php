@@ -38,7 +38,7 @@ class SiteController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['signup'],
+                        'actions' => ['signup', 'verify-email', 'request-password-reset', 'resend-verification-email'],
                         'allow' => true,
                         'roles' => ['?'],
                     ],
