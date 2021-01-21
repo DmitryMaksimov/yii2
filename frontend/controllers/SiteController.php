@@ -34,7 +34,7 @@ class SiteController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index', 'login', 'about', 'contact'],
+                        'actions' => ['index', 'login', 'about', 'contact', 'busy'],
                         'allow' => true,
                     ],
                     [
@@ -80,6 +80,17 @@ class SiteController extends Controller
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
             ],
         ];
+    }
+
+    
+    /**
+     * Displays homepage.
+     *
+     * @return mixed
+     */
+    public function actionBusy()
+    {
+        return $this->render('busy');
     }
 
     /**

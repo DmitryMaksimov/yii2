@@ -4,6 +4,9 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
+$this->title = 'Генератор простых Url';
+$this->params['breadcrumbs'][] = $this->title;
+
 $this->registerJs( "
     $(result_block).hide();
     $('#post-form').on('beforeSubmit', function() {
@@ -30,7 +33,7 @@ $this->registerJs( "
 );
 
 ?>
-<h1>Генератор простых Url</h1>
+<h1><?php echo Html::encode($this->title); ?></h1>
 
 <p>
     <?php
