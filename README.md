@@ -11,4 +11,5 @@
     Появится папка yii2
 
 3. Скофигурировать OpenServer
+
     <img src="openserver.png"/>
