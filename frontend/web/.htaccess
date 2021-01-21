@@ -1,0 +1,10 @@
+<IfModule rewrite_module>
+    RewriteEngine On
+
+    RewriteCond %{REQUEST_URI} ^/\d+$ [NC]
+    RewriteRule ^(.*)$ /index.php?r=names\%2Fget&id=$1 [L,QSA]
+
+#    RewriteCond %{REQUEST_URI} ^/$ [NC]
+#    RewriteRule ^(.*)$ /frontend/web/index.php?$1 [L,QSA]
+
+</IfModule>
